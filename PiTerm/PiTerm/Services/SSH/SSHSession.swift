@@ -51,6 +51,7 @@ actor SSHSession {
         onData: @escaping @Sendable (Data) -> Void
     ) async throws {
         guard case .disconnected = state else {
+            print("[PiTerm] SSHSession: already connected or connecting")
             throw SSHSessionError.alreadyConnected
         }
 
@@ -58,19 +59,34 @@ actor SSHSession {
         state = .connecting
 
         do {
+            print("[PiTerm] SSHSession: TCP connecting to \(host):\(port)...")
             let authDelegate = PasswordAuthenticator(username: username, password: password)
             let conn = try await client.connect(host: host, port: port, authDelegate: authDelegate)
             self.connection = conn
+            print("[PiTerm] SSHSession: TCP connected, opening shell channel...")
 
-            let channel = try await client.openShellChannel(
-                on: conn,
-                initialTermSize: termSize,
-                onData: onData
-            )
+            let channel = try await withThrowingTaskGroup(of: Channel.self) { group in
+                group.addTask {
+                    try await self.client.openShellChannel(
+                        on: conn,
+                        initialTermSize: termSize,
+                        onData: onData
+                    )
+                }
+                group.addTask {
+                    try await Task.sleep(for: .seconds(15))
+                    throw SSHSessionError.connectionFailed("SSH handshake timed out after 15s")
+                }
+                let result = try await group.next()!
+                group.cancelAll()
+                return result
+            }
             self.shellChannel = channel
             state = .connected
+            print("[PiTerm] SSHSession: Shell channel open, fully connected!")
         } catch {
             state = .error(error)
+            print("[PiTerm] SSHSession: Connection error: \(error)")
             throw error
         }
     }

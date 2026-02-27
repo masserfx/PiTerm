@@ -61,6 +61,11 @@ struct TerminalContainerView: View {
         }
         .navigationTitle(appState.activeHost?.name ?? "Terminal")
         .navigationBarTitleDisplayMode(.inline)
+        .onReceive(NotificationCenter.default.publisher(for: .terminalDataReceived)) { notification in
+            if let data = notification.userInfo?["data"] as? Data {
+                terminalRef?.feed(data: data)
+            }
+        }
     }
 
     private func sendData(_ data: Data) {

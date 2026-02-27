@@ -15,6 +15,7 @@ struct HostListView: View {
     @State private var passwordPrompt: SSHHost?
     @State private var enteredPassword = ""
     @State private var tailscaleService = TailscaleService()
+    @State private var didAttemptAutoConnect = false
 
     var body: some View {
         Group {
@@ -51,6 +52,17 @@ struct HostListView: View {
             Button("OK") { errorMessage = nil }
         } message: {
             Text(errorMessage ?? "")
+        }
+        .task {
+            // Auto-connect to LAN host on first launch if not already connected
+            guard !appState.isConnected, !isConnecting, !didAttemptAutoConnect else { return }
+            didAttemptAutoConnect = true
+            try? await Task.sleep(for: .seconds(1))
+            guard !appState.isConnected, !isConnecting else { return }
+            if let lanHost = hosts.first(where: { $0.hostname == "192.168.0.169" }) {
+                print("[PiTerm] Auto-connecting to LAN host...")
+                connectToHost(lanHost)
+            }
         }
     }
 
@@ -147,10 +159,13 @@ struct HostListView: View {
 
     private func connectToHost(_ host: SSHHost) {
         let keychainAccount = "\(host.username)@\(host.hostname):\(host.port)"
+        print("[PiTerm] connectToHost: \(host.hostname), keychain account: \(keychainAccount)")
         if let passwordData = try? KeychainHelper.load(service: "com.piterm.passwords", account: keychainAccount),
            let password = String(data: passwordData, encoding: .utf8) {
+            print("[PiTerm] Password found in Keychain, connecting...")
             performConnect(host: host, password: password)
         } else {
+            print("[PiTerm] No password in Keychain, showing prompt")
             passwordPrompt = host
         }
     }
@@ -158,12 +173,14 @@ struct HostListView: View {
     private func performConnect(host: SSHHost, password: String) {
         isConnecting = true
         connectingHost = host
+        print("[PiTerm] performConnect to \(host.hostname):\(host.port) as \(host.username)")
 
         Task {
             do {
                 let session = SSHSession()
                 let termSize = (width: 80, height: 24)
 
+                print("[PiTerm] Calling session.connect...")
                 try await session.connect(
                     host: host.hostname,
                     port: host.port,
@@ -181,6 +198,7 @@ struct HostListView: View {
                     }
                 )
 
+                print("[PiTerm] SSH connected successfully!")
                 await MainActor.run {
                     host.lastConnected = Date()
                     appState.activeSession = session
@@ -190,6 +208,7 @@ struct HostListView: View {
                     isConnecting = false
                 }
             } catch {
+                print("[PiTerm] SSH connection error: \(error)")
                 await MainActor.run {
                     errorMessage = error.localizedDescription
                     isConnecting = false
