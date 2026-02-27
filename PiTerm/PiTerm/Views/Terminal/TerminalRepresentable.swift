@@ -13,8 +13,10 @@ struct TerminalRepresentable: UIViewRepresentable {
     func makeUIView(context: Context) -> TerminalView {
         let terminal = TerminalView(frame: .zero)
         terminal.terminalDelegate = context.coordinator
+        terminal.nativeBackgroundColor = .black
+        terminal.nativeForegroundColor = .white
 
-        let fontSize: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 14 : 12
+        let fontSize: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 14 : 11
         terminal.font = UIFont.monospacedSystemFont(ofSize: fontSize, weight: .regular)
 
         DispatchQueue.main.async {

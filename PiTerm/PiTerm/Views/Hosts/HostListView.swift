@@ -158,6 +158,11 @@ struct HostListView: View {
     }
 
     private func connectToHost(_ host: SSHHost) {
+        guard !isConnecting, !appState.isConnected else {
+            print("[PiTerm] connectToHost: skipping — already connecting or connected")
+            return
+        }
+
         let keychainAccount = "\(host.username)@\(host.hostname):\(host.port)"
         print("[PiTerm] connectToHost: \(host.hostname), keychain account: \(keychainAccount)")
         if let passwordData = try? KeychainHelper.load(service: "com.piterm.passwords", account: keychainAccount),
@@ -171,13 +176,29 @@ struct HostListView: View {
     }
 
     private func performConnect(host: SSHHost, password: String) {
+        guard !isConnecting else {
+            print("[PiTerm] performConnect: skipping — already connecting")
+            return
+        }
         isConnecting = true
         connectingHost = host
         print("[PiTerm] performConnect to \(host.hostname):\(host.port) as \(host.username)")
 
         Task {
+            // Disconnect any existing session first
+            if let oldSession = appState.activeSession {
+                print("[PiTerm] Disconnecting previous session...")
+                await oldSession.shutdown()
+                await MainActor.run {
+                    appState.activeSession = nil
+                    appState.activeHost = nil
+                    appState.isConnected = false
+                }
+            }
+
             do {
                 let session = SSHSession()
+                // Use a reasonable default; will be resized once TerminalView reports actual size
                 let termSize = (width: 80, height: 24)
 
                 print("[PiTerm] Calling session.connect...")

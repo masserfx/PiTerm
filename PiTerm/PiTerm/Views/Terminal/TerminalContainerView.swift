@@ -66,6 +66,16 @@ struct TerminalContainerView: View {
                 terminalRef?.feed(data: data)
             }
         }
+        .onChange(of: appState.isConnected) { _, connected in
+            // When newly connected, send the actual terminal size to the server
+            if connected, let ref = terminalRef {
+                let size = ref.terminalSize
+                if size.cols > 0 && size.rows > 0 {
+                    print("[PiTerm] Sending initial terminal size: \(size.cols)x\(size.rows)")
+                    resizeTerminal(cols: size.cols, rows: size.rows)
+                }
+            }
+        }
     }
 
     private func sendData(_ data: Data) {
