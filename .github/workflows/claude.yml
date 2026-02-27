@@ -26,9 +26,12 @@ jobs:
       (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude'))
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
       - uses: anthropics/claude-code-action@v1
         with:
-          # Use OAuth token for Claude Max subscription (no API charges)
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           trigger_phrase: "@claude"
           label_trigger: "claude"
