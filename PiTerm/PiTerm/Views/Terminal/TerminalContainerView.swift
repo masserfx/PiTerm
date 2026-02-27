@@ -81,7 +81,17 @@ struct TerminalContainerView: View {
     private func sendData(_ data: Data) {
         guard let session = appState.activeSession else { return }
         Task {
-            try? await session.send(data)
+            do {
+                try await session.send(data)
+            } catch {
+                print("[PiTerm] Send failed: \(error)")
+                await MainActor.run {
+                    appState.isConnected = false
+                    appState.activeSession = nil
+                    appState.activeHost = nil
+                    errorMessage = "Connection lost"
+                }
+            }
         }
     }
 

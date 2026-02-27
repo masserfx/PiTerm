@@ -115,7 +115,8 @@ final class SSHClient: Sendable {
             }
             .channelOption(ChannelOptions.socketOption(.so_reuseaddr), value: 1)
             .channelOption(ChannelOptions.socket(IPPROTO_TCP, TCP_NODELAY), value: 1)
-            .connectTimeout(.seconds(10))
+            .channelOption(ChannelOptions.socketOption(.so_keepalive), value: 1)
+            .connectTimeout(.seconds(15))
 
         return try await bootstrap.connect(host: host, port: port).get()
     }

@@ -9,6 +9,7 @@ enum SSHSessionError: Error, LocalizedError {
     case authenticationFailed
     case channelCreationFailed
     case invalidChannelType
+    case channelClosed
 
     var errorDescription: String? {
         switch self {
@@ -18,6 +19,7 @@ enum SSHSessionError: Error, LocalizedError {
         case .authenticationFailed: "Authentication failed"
         case .channelCreationFailed: "Failed to create SSH channel"
         case .invalidChannelType: "Invalid channel type"
+        case .channelClosed: "Connection lost"
         }
     }
 }
@@ -74,8 +76,8 @@ actor SSHSession {
                     )
                 }
                 group.addTask {
-                    try await Task.sleep(for: .seconds(15))
-                    throw SSHSessionError.connectionFailed("SSH handshake timed out after 15s")
+                    try await Task.sleep(for: .seconds(20))
+                    throw SSHSessionError.connectionFailed("SSH handshake timed out after 20s")
                 }
                 let result = try await group.next()!
                 group.cancelAll()
@@ -128,6 +130,10 @@ actor SSHSession {
         guard let channel = shellChannel else {
             throw SSHSessionError.notConnected
         }
+        guard channel.isActive else {
+            state = .disconnected
+            throw SSHSessionError.channelClosed
+        }
 
         var buffer = channel.allocator.buffer(capacity: data.count)
         buffer.writeBytes(data)
@@ -135,8 +141,8 @@ actor SSHSession {
     }
 
     func resize(width: Int, height: Int) async throws {
-        guard let channel = shellChannel else {
-            throw SSHSessionError.notConnected
+        guard let channel = shellChannel, channel.isActive else {
+            return // silently skip resize if not connected
         }
         try await client.sendWindowChange(on: channel, width: width, height: height)
     }
