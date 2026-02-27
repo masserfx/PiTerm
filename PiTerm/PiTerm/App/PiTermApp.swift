@@ -65,23 +65,49 @@ struct PiTermApp: App {
         try? KeychainHelper.save(data: password, service: "com.piterm.passwords", account: "hassio@100.114.170.107:22")
     }
 
-    /// Migrate old Tailscale IP to new one on existing installs
+    /// Ensure all expected hosts exist and IPs are current
     private func migrateHosts(container: ModelContainer) {
         let context = ModelContext(container)
         let descriptor = FetchDescriptor<SSHHost>()
         guard let hosts = try? context.fetch(descriptor) else { return }
 
+        let password = Data("5164".utf8)
+
+        // Migrate old Tailscale IP
         for host in hosts where host.hostname == "100.101.196.71" {
             host.hostname = "100.114.170.107"
-            // Migrate keychain password
-            let oldAccount = "\(host.username)@100.101.196.71:\(host.port)"
-            let newAccount = "\(host.username)@100.114.170.107:\(host.port)"
-            if let passwordData = try? KeychainHelper.load(service: "com.piterm.passwords", account: oldAccount) {
-                try? KeychainHelper.save(data: passwordData, service: "com.piterm.passwords", account: newAccount)
-            }
-            // Pre-store password for new IP
-            try? KeychainHelper.save(data: Data("5164".utf8), service: "com.piterm.passwords", account: newAccount)
         }
+
+        // Ensure Tailscale host exists
+        if !hosts.contains(where: { $0.hostname == "100.114.170.107" }) {
+            let ts = SSHHost(
+                name: "Raspberry Pi (Tailscale)",
+                hostname: "100.114.170.107",
+                port: 22,
+                username: "hassio",
+                authMethod: .password,
+                isTailscale: true,
+                groupName: "Tailscale"
+            )
+            context.insert(ts)
+        }
+        try? KeychainHelper.save(data: password, service: "com.piterm.passwords", account: "hassio@100.114.170.107:22")
+
+        // Ensure LAN host exists
+        if !hosts.contains(where: { $0.hostname == "192.168.0.169" }) {
+            let lan = SSHHost(
+                name: "Raspberry Pi (LAN)",
+                hostname: "192.168.0.169",
+                port: 22,
+                username: "hassio",
+                authMethod: .password,
+                isTailscale: false,
+                groupName: "Local"
+            )
+            context.insert(lan)
+        }
+        try? KeychainHelper.save(data: password, service: "com.piterm.passwords", account: "hassio@192.168.0.169:22")
+
         try? context.save()
     }
 }
