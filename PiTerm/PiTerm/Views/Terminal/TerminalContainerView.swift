@@ -119,6 +119,7 @@ struct TerminalContainerView: View {
                 appState.isConnected = false
                 appState.activeSession = nil
                 appState.activeHost = nil
+                appState.selectedTab = .hosts
             }
         }
     }
