@@ -87,8 +87,13 @@ actor SSHSession {
             state = .connected
             print("[PiTerm] SSHSession: Shell channel open, fully connected!")
         } catch {
-            state = .error(error)
+            state = .disconnected
             print("[PiTerm] SSHSession: Connection error: \(error)")
+            print("[PiTerm] SSHSession: Error type: \(type(of: error))")
+            print("[PiTerm] SSHSession: Error description: \(error.localizedDescription)")
+            // Clean up on failure
+            try? await connection?.close()
+            connection = nil
             throw error
         }
     }

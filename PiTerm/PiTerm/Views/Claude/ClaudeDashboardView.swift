@@ -15,6 +15,7 @@ struct ClaudeDashboardView: View {
     @State private var selectedRepoForIssues: String = "PiTerm"
     @State private var issueFilter: IssueFilter = .open
     @State private var pollTimer: Timer?
+    @State private var apiError: String?
 
     enum IssueFilter: String, CaseIterable {
         case open = "Open"
@@ -75,6 +76,7 @@ struct ClaudeDashboardView: View {
             Text("Issue created. Claude will pick it up shortly.")
         }
         .task {
+            github.loadToken()
             if github.isAuthenticated {
                 await refreshAll()
             }
@@ -113,6 +115,17 @@ struct ClaudeDashboardView: View {
 
     private var mainContent: some View {
         List {
+            // API error (debug)
+            if let apiError {
+                Section {
+                    Text(apiError)
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                } header: {
+                    Label("API Error", systemImage: "exclamationmark.triangle")
+                }
+            }
+
             // Active tmux sessions (if SSH connected)
             if appState.isConnected && !sessionManager.sessions.isEmpty {
                 sessionsSection
@@ -434,13 +447,24 @@ struct ClaudeDashboardView: View {
     private func loadRepos() async {
         isLoadingRepos = true
         defer { isLoadingRepos = false }
-        repos = (try? await github.fetchRepos(user: gitHubUser)) ?? []
+        do {
+            repos = try await github.fetchRepos(user: gitHubUser)
+            apiError = nil
+        } catch {
+            repos = []
+            apiError = "Repos: \(error.localizedDescription)"
+        }
     }
 
     private func loadIssues() async {
         isLoadingIssues = true
         defer { isLoadingIssues = false }
-        issues = (try? await github.fetchIssues(owner: gitHubUser, repo: selectedRepoForIssues, state: issueFilter.apiState)) ?? []
+        do {
+            issues = try await github.fetchIssues(owner: gitHubUser, repo: selectedRepoForIssues, state: issueFilter.apiState)
+        } catch {
+            issues = []
+            apiError = "Issues: \(error.localizedDescription)"
+        }
     }
 
     private func startPolling() {

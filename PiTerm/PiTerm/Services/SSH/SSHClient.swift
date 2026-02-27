@@ -76,8 +76,9 @@ final class SSHErrorHandler: ChannelInboundHandler {
     typealias InboundIn = Any
 
     func errorCaught(context: ChannelHandlerContext, error: Error) {
-        print("[PiTerm] SSH pipeline error: \(error)")
-        context.close(promise: nil)
+        print("[PiTerm] SSH pipeline error: \(error) — type: \(type(of: error))")
+        // Don't close immediately on auth errors — let the state machine handle it
+        context.fireErrorCaught(error)
     }
 
     func channelInactive(context: ChannelHandlerContext) {

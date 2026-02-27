@@ -235,8 +235,9 @@ struct HostListView: View {
                 }
             } catch {
                 print("[PiTerm] SSH connection error: \(error)")
+                let detail = "\(type(of: error)): \(error)"
                 await MainActor.run {
-                    errorMessage = error.localizedDescription
+                    errorMessage = "\(error.localizedDescription)\n\nDebug: \(detail)"
                     isConnecting = false
                     connectingHost = nil
                 }
