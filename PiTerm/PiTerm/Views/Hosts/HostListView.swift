@@ -166,7 +166,8 @@ struct HostListView: View {
         let keychainAccount = "\(host.username)@\(host.hostname):\(host.port)"
         print("[PiTerm] connectToHost: \(host.hostname), keychain account: \(keychainAccount)")
         if let passwordData = try? KeychainHelper.load(service: "com.piterm.passwords", account: keychainAccount),
-           let password = String(data: passwordData, encoding: .utf8) {
+           let password = String(data: passwordData, encoding: .utf8),
+           !password.isEmpty {
             print("[PiTerm] Password found in Keychain, connecting...")
             performConnect(host: host, password: password)
         } else {
@@ -220,6 +221,10 @@ struct HostListView: View {
                 )
 
                 print("[PiTerm] SSH connected successfully!")
+                // Save password to keychain for future connections
+                let account = "\(host.username)@\(host.hostname):\(host.port)"
+                try? KeychainHelper.save(data: Data(password.utf8), service: "com.piterm.passwords", account: account)
+
                 await MainActor.run {
                     host.lastConnected = Date()
                     appState.activeSession = session
