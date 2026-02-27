@@ -1,24 +1,41 @@
 #if os(iOS)
 import SwiftUI
 
-/// Dashboard showing Claude tmux sessions and GitHub repos for cloning
+/// Dashboard showing Claude sessions, GitHub repos and issues
 struct ClaudeDashboardView: View {
     @Environment(AppState.self) private var appState
     @State private var sessionManager = ClaudeSessionManager()
     @State private var searchText = ""
+    @State private var showCreateIssue = false
+    @State private var repos: [GitHubRepo] = []
+    @State private var issues: [GitHubService.Issue] = []
+    @State private var isLoadingRepos = false
+    @State private var isLoadingIssues = false
+    @State private var createdIssueURL: String?
+    @State private var selectedRepoForIssues: String = "PiTerm"
+
+    private let github = GitHubService.shared
+    private let gitHubUser = "masserfx"
 
     var body: some View {
         Group {
-            if !appState.isConnected {
-                notConnectedView
+            if !github.isAuthenticated {
+                tokenRequiredView
             } else {
                 mainContent
             }
         }
         .navigationTitle("Claude")
         .toolbar {
-            if appState.isConnected {
+            if github.isAuthenticated {
                 ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        showCreateIssue = true
+                    } label: {
+                        Image(systemName: "plus")
+                    }
+                }
+                ToolbarItem(placement: .automatic) {
                     Button {
                         Task { await refreshAll() }
                     } label: {
@@ -27,28 +44,45 @@ struct ClaudeDashboardView: View {
                 }
             }
         }
+        .sheet(isPresented: $showCreateIssue) {
+            CreateIssueView(repos: repos, gitHubUser: gitHubUser) { number, url in
+                createdIssueURL = url
+                Task { await loadIssues() }
+            }
+        }
+        .alert("Issue Created", isPresented: .init(
+            get: { createdIssueURL != nil },
+            set: { if !$0 { createdIssueURL = nil } }
+        )) {
+            Button("OK") { createdIssueURL = nil }
+        } message: {
+            Text("Issue created. Claude will pick it up shortly.")
+        }
         .task {
+            if github.isAuthenticated {
+                await refreshAll()
+            }
             if let session = appState.activeSession {
                 sessionManager.attach(to: session)
-                await refreshAll()
+                await sessionManager.refreshSessions()
             }
         }
         .onChange(of: appState.isConnected) { _, connected in
             if connected, let session = appState.activeSession {
                 sessionManager.attach(to: session)
-                Task { await refreshAll() }
+                Task { await sessionManager.refreshSessions() }
             }
         }
     }
 
-    private var notConnectedView: some View {
+    private var tokenRequiredView: some View {
         ContentUnavailableView {
-            Label("Not Connected", systemImage: "wifi.slash")
+            Label("GitHub Token Required", systemImage: "key")
         } description: {
-            Text("Connect to a host to manage Claude sessions")
+            Text("Add your GitHub personal access token in Settings to create issues and trigger Claude.")
         } actions: {
-            Button("Go to Hosts") {
-                appState.selectedTab = .hosts
+            Button("Go to Settings") {
+                appState.selectedTab = .settings
             }
             .buttonStyle(.borderedProminent)
         }
@@ -56,26 +90,113 @@ struct ClaudeDashboardView: View {
 
     private var mainContent: some View {
         List {
-            // Active tmux sessions
-            if !sessionManager.sessions.isEmpty {
+            // Active tmux sessions (if SSH connected)
+            if appState.isConnected && !sessionManager.sessions.isEmpty {
                 sessionsSection
             }
 
-            // Cloned projects ready to use
-            if !clonedProjects.isEmpty {
-                clonedProjectsSection
-            }
+            // Open issues with Claude label
+            issuesSection
 
-            // GitHub repos available to clone
+            // GitHub repos
             reposSection
 
-            // Quick Actions
-            quickActionsSection
+            // Quick actions (if SSH connected)
+            if appState.isConnected {
+                quickActionsSection
+            }
         }
-        .searchable(text: $searchText, prompt: "Search repos...")
+        .searchable(text: $searchText, prompt: "Search repos & issues...")
         .refreshable {
             await refreshAll()
         }
+    }
+
+    // MARK: - Issues Section
+
+    private var filteredIssues: [GitHubService.Issue] {
+        if searchText.isEmpty { return issues }
+        return issues.filter {
+            $0.title.localizedCaseInsensitiveContains(searchText) ||
+            ($0.body ?? "").localizedCaseInsensitiveContains(searchText)
+        }
+    }
+
+    private var issuesSection: some View {
+        Section {
+            if isLoadingIssues {
+                HStack {
+                    ProgressView()
+                    Text("Loading issues...")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+            } else if filteredIssues.isEmpty {
+                Button {
+                    showCreateIssue = true
+                } label: {
+                    Label("Create your first issue for Claude", systemImage: "plus.circle")
+                        .foregroundStyle(.purple)
+                }
+            } else {
+                ForEach(filteredIssues) { issue in
+                    issueRow(issue)
+                }
+            }
+        } header: {
+            HStack {
+                Label("Issues — \(selectedRepoForIssues)", systemImage: "exclamationmark.circle")
+                Spacer()
+                Menu {
+                    ForEach(repos) { repo in
+                        Button(repo.name) {
+                            selectedRepoForIssues = repo.name
+                            Task { await loadIssues() }
+                        }
+                    }
+                } label: {
+                    Image(systemName: "chevron.down.circle")
+                        .font(.caption)
+                }
+            }
+        }
+    }
+
+    private func issueRow(_ issue: GitHubService.Issue) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 6) {
+                Image(systemName: "circle.fill")
+                    .font(.system(size: 6))
+                    .foregroundStyle(.green)
+                Text("#\(issue.number)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text(issue.title)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .lineLimit(2)
+            }
+
+            HStack(spacing: 4) {
+                ForEach(issue.labels, id: \.name) { label in
+                    Text(label.name)
+                        .font(.caption2)
+                        .padding(.horizontal, 5)
+                        .padding(.vertical, 1)
+                        .background(label.name == "claude" ? Color.purple.opacity(0.2) : Color.gray.opacity(0.15))
+                        .foregroundStyle(label.name == "claude" ? .purple : .secondary)
+                        .clipShape(Capsule())
+                }
+            }
+
+            if let body = issue.body, !body.isEmpty {
+                Text(body)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+            }
+        }
+        .padding(.vertical, 2)
     }
 
     // MARK: - Sessions Section
@@ -83,99 +204,52 @@ struct ClaudeDashboardView: View {
     private var sessionsSection: some View {
         Section {
             ForEach(sessionManager.sessions) { session in
-                sessionRow(session)
+                Button {
+                    sendSSH(sessionManager.attachToSession(name: session.name))
+                    appState.selectedTab = .terminal
+                } label: {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            HStack(spacing: 4) {
+                                Text(session.name)
+                                    .font(.headline)
+                                    .foregroundStyle(.primary)
+                                if session.isClaude {
+                                    Image(systemName: "brain")
+                                        .font(.caption)
+                                        .foregroundStyle(.purple)
+                                }
+                            }
+                            Text(session.created)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        if session.attached {
+                            Text("Attached")
+                                .font(.caption2)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(.green.opacity(0.2))
+                                .foregroundStyle(.green)
+                                .clipShape(Capsule())
+                        }
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundStyle(.tertiary)
+                    }
+                }
             }
         } header: {
             Label("Active Sessions", systemImage: "terminal")
         }
     }
 
-    private func sessionRow(_ session: ClaudeSessionManager.TmuxSession) -> some View {
-        Button {
-            sendCommand(sessionManager.attachToSession(name: session.name))
-            appState.selectedTab = .terminal
-        } label: {
-            HStack {
-                VStack(alignment: .leading, spacing: 2) {
-                    HStack(spacing: 4) {
-                        Text(session.name)
-                            .font(.headline)
-                            .foregroundStyle(.primary)
-                        if session.isClaude {
-                            Image(systemName: "brain")
-                                .font(.caption)
-                                .foregroundStyle(.purple)
-                        }
-                    }
-                    Text(session.created)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-
-                Spacer()
-
-                if session.attached {
-                    Text("Attached")
-                        .font(.caption2)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(.green.opacity(0.2))
-                        .foregroundStyle(.green)
-                        .clipShape(Capsule())
-                }
-
-                Image(systemName: "chevron.right")
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
-            }
-        }
-    }
-
-    // MARK: - Cloned Projects Section
-
-    private var clonedProjects: [String] {
-        let cloned = Array(sessionManager.clonedProjects).sorted()
-        if searchText.isEmpty { return cloned }
-        return cloned.filter { $0.localizedCaseInsensitiveContains(searchText) }
-    }
-
-    private var clonedProjectsSection: some View {
-        Section {
-            ForEach(clonedProjects, id: \.self) { name in
-                Button {
-                    sendCommand(sessionManager.openProject(name: name))
-                    appState.selectedTab = .terminal
-                } label: {
-                    HStack {
-                        Image(systemName: "folder.fill")
-                            .foregroundStyle(.blue)
-                            .frame(width: 28)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(name)
-                                .font(.headline)
-                                .foregroundStyle(.primary)
-                            Text("~/projects/\(name)")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                        Spacer()
-                        Text("Open")
-                            .font(.caption)
-                            .foregroundStyle(.blue)
-                    }
-                }
-            }
-        } header: {
-            Label("Projects on RPi", systemImage: "folder")
-        }
-    }
-
     // MARK: - Repos Section
 
     private var filteredRepos: [GitHubRepo] {
-        let available = sessionManager.repos.filter { !sessionManager.clonedProjects.contains($0.name) }
-        if searchText.isEmpty { return available }
-        return available.filter {
+        if searchText.isEmpty { return repos }
+        return repos.filter {
             $0.name.localizedCaseInsensitiveContains(searchText) ||
             $0.description.localizedCaseInsensitiveContains(searchText)
         }
@@ -183,7 +257,7 @@ struct ClaudeDashboardView: View {
 
     private var reposSection: some View {
         Section {
-            if sessionManager.isLoadingRepos {
+            if isLoadingRepos {
                 HStack {
                     ProgressView()
                     Text("Loading repos...")
@@ -191,13 +265,8 @@ struct ClaudeDashboardView: View {
                         .foregroundStyle(.secondary)
                 }
             } else if filteredRepos.isEmpty {
-                if searchText.isEmpty {
-                    Text("No repos found")
-                        .foregroundStyle(.secondary)
-                } else {
-                    Text("No matching repos")
-                        .foregroundStyle(.secondary)
-                }
+                Text("No repos found")
+                    .foregroundStyle(.secondary)
             } else {
                 ForEach(filteredRepos) { repo in
                     repoRow(repo)
@@ -206,36 +275,36 @@ struct ClaudeDashboardView: View {
         } header: {
             Label("GitHub Repos", systemImage: "cloud")
         } footer: {
-            if !sessionManager.repos.isEmpty {
-                Text("\(sessionManager.repos.count) repos available")
+            if !repos.isEmpty {
+                Text("\(repos.count) repos")
             }
         }
     }
 
     private func repoRow(_ repo: GitHubRepo) -> some View {
-        Button {
-            sendCommand(sessionManager.cloneAndStartClaude(repo: repo))
-            appState.selectedTab = .terminal
-        } label: {
-            HStack {
-                Image(systemName: "arrow.down.circle")
-                    .foregroundStyle(.orange)
-                    .frame(width: 28)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(repo.name)
-                        .font(.headline)
-                        .foregroundStyle(.primary)
-                    if !repo.description.isEmpty {
-                        Text(repo.description)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(2)
-                    }
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(repo.name)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                if !repo.description.isEmpty {
+                    Text(repo.description)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
                 }
-                Spacer()
-                Text("Clone")
-                    .font(.caption)
-                    .foregroundStyle(.orange)
+            }
+            Spacer()
+            if appState.isConnected {
+                Button {
+                    sendSSH(sessionManager.cloneAndStartClaude(repo: repo))
+                    appState.selectedTab = .terminal
+                } label: {
+                    Text("Clone")
+                        .font(.caption)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
             }
         }
     }
@@ -246,7 +315,7 @@ struct ClaudeDashboardView: View {
         Section {
             ForEach(ClaudeCommands.claudeCLI, id: \.name) { cmd in
                 Button {
-                    sendCommand(cmd.command + "\n")
+                    sendSSH(cmd.command + "\n")
                     appState.selectedTab = .terminal
                 } label: {
                     Label(cmd.name, systemImage: cmd.icon)
@@ -260,14 +329,24 @@ struct ClaudeDashboardView: View {
     // MARK: - Helpers
 
     private func refreshAll() async {
-        if let session = appState.activeSession {
-            sessionManager.attach(to: session)
-        }
-        await sessionManager.refreshSessions()
-        await sessionManager.fetchRepos()
+        async let r: () = loadRepos()
+        async let i: () = loadIssues()
+        _ = await (r, i)
     }
 
-    private func sendCommand(_ command: String) {
+    private func loadRepos() async {
+        isLoadingRepos = true
+        defer { isLoadingRepos = false }
+        repos = (try? await github.fetchRepos(user: gitHubUser)) ?? []
+    }
+
+    private func loadIssues() async {
+        isLoadingIssues = true
+        defer { isLoadingIssues = false }
+        issues = (try? await github.fetchIssues(owner: gitHubUser, repo: selectedRepoForIssues)) ?? []
+    }
+
+    private func sendSSH(_ command: String) {
         guard let session = appState.activeSession else { return }
         Task {
             try? await session.send(Data(command.utf8))

@@ -10,6 +10,11 @@ struct SettingsView: View {
     @AppStorage("hapticFeedback") private var hapticFeedback = true
     @AppStorage("autoReconnect") private var autoReconnect = true
 
+    @State private var gitHubToken = ""
+    @State private var isTokenSaved = false
+
+    private let github = GitHubService.shared
+
     var body: some View {
         Form {
             Section("Terminal") {
@@ -25,6 +30,42 @@ struct SettingsView: View {
             Section("Connection") {
                 Toggle("Auto-Reconnect", isOn: $autoReconnect)
                 Toggle("Haptic Feedback", isOn: $hapticFeedback)
+            }
+
+            Section {
+                if github.isAuthenticated {
+                    HStack {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                        Text("Token configured")
+                        Spacer()
+                        Button("Remove") {
+                            github.clearToken()
+                            gitHubToken = ""
+                            isTokenSaved = false
+                        }
+                        .foregroundStyle(.red)
+                    }
+                } else {
+                    SecureField("ghp_...", text: $gitHubToken)
+                        .autocorrectionDisabled()
+                        .textInputAutocapitalization(.never)
+                    Button {
+                        github.saveToken(gitHubToken)
+                        isTokenSaved = true
+                    } label: {
+                        Label("Save Token", systemImage: "key")
+                    }
+                    .disabled(gitHubToken.isEmpty)
+                }
+            } header: {
+                Text("GitHub")
+            } footer: {
+                if !github.isAuthenticated {
+                    Text("Personal access token with 'repo' scope. Get one at github.com/settings/tokens")
+                } else {
+                    Text("Used for creating issues and triggering Claude Code Action.")
+                }
             }
 
             Section("Tailscale") {

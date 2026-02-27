@@ -38,6 +38,8 @@
 		A10000290000000000000022 /* NIOCore in Frameworks */ = {isa = PBXBuildFile; productRef = B10000030000000000000003; };
 		A10000300000000000000023 /* NIOPosix in Frameworks */ = {isa = PBXBuildFile; productRef = B10000040000000000000004; };
 		A10000310000000000000024 /* GitHubRepo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000310000000000000024; };
+		A10000320000000000000025 /* GitHubService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000320000000000000025; };
+		A10000330000000000000026 /* CreateIssueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000330000000000000026; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -69,6 +71,8 @@
 		A20000260000000000000019 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A20000270000000000000020 /* PiTerm.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PiTerm.entitlements; sourceTree = "<group>"; };
 		A20000310000000000000024 /* GitHubRepo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubRepo.swift; sourceTree = "<group>"; };
+		A20000320000000000000025 /* GitHubService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubService.swift; sourceTree = "<group>"; };
+		A20000330000000000000026 /* CreateIssueView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateIssueView.swift; sourceTree = "<group>"; };
 		C10000010000000000000001 /* PiTerm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PiTerm.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -144,8 +148,17 @@
 				E1000010000000000000000A /* SSH */,
 				E1000011000000000000000B /* Tailscale */,
 				E1000012000000000000000C /* Claude */,
+				E10000200000000000000020 /* GitHub */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		E10000200000000000000020 /* GitHub */ = {
+			isa = PBXGroup;
+			children = (
+				A20000320000000000000025 /* GitHubService.swift */,
+			);
+			path = GitHub;
 			sourceTree = "<group>";
 		};
 		E10000070000000000000007 /* Views */ = {
@@ -230,6 +243,7 @@
 			isa = PBXGroup;
 			children = (
 				A20000220000000000000015 /* ClaudeDashboardView.swift */,
+				A20000330000000000000026 /* CreateIssueView.swift */,
 			);
 			path = Claude;
 			sourceTree = "<group>";
@@ -348,6 +362,8 @@
 				A10000240000000000000017 /* KeychainHelper.swift in Sources */,
 				A10000250000000000000018 /* NetworkMonitor.swift in Sources */,
 				A10000310000000000000024 /* GitHubRepo.swift in Sources */,
+				A10000320000000000000025 /* GitHubService.swift in Sources */,
+				A10000330000000000000026 /* CreateIssueView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,7 +1,7 @@
 import Foundation
 
 /// Represents a GitHub repository for display and cloning
-struct GitHubRepo: Identifiable, Codable {
+struct GitHubRepo: Identifiable, Codable, Hashable {
     var id: String { name }
     let name: String
     let description: String
