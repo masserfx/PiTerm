@@ -6,7 +6,7 @@ let package = Package(
     platforms: [.iOS(.v17), .macOS(.v14)],
     dependencies: [
         .package(url: "https://github.com/migueldeicaza/SwiftTerm.git", from: "1.2.0"),
-        .package(url: "https://github.com/apple/swift-nio-ssh.git", from: "0.8.0"),
+        .package(name: "swift-nio-ssh", path: "../swift-nio-ssh-fork"),
         .package(url: "https://github.com/apple/swift-nio.git", from: "2.65.0"),
     ],
     targets: [
