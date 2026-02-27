@@ -13,7 +13,6 @@ struct TerminalRepresentable: UIViewRepresentable {
     func makeUIView(context: Context) -> TerminalView {
         let terminal = TerminalView(frame: .zero)
         terminal.terminalDelegate = context.coordinator
-        terminal.configureNativeColors()
 
         let fontSize: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 14 : 12
         terminal.font = UIFont.monospacedSystemFont(ofSize: fontSize, weight: .regular)
@@ -52,9 +51,14 @@ struct TerminalRepresentable: UIViewRepresentable {
         }
 
         func hostCurrentDirectoryUpdate(source: TerminalView, directory: String?) {}
+        func bell(source: TerminalView) {}
+        func clipboardCopy(source: TerminalView, content: Data) {}
+        func iTermContent(source: TerminalView, content: ArraySlice<UInt8>) {}
+        func rangeChanged(source: TerminalView, startY: Int, endY: Int) {}
 
         func requestOpenLink(source: TerminalView, link: String, params: [String: String]) {
-            if let url = URL(string: link) {
+            guard let url = URL(string: link) else { return }
+            Task { @MainActor in
                 UIApplication.shared.open(url)
             }
         }
@@ -63,6 +67,7 @@ struct TerminalRepresentable: UIViewRepresentable {
 
 /// Reference wrapper to allow feeding data into the terminal from SwiftUI
 @Observable
+@MainActor
 class TerminalViewReference {
     private(set) weak var view: TerminalView?
 
@@ -71,7 +76,7 @@ class TerminalViewReference {
     }
 
     func feed(data: Data) {
-        let bytes = [UInt8](data)
+        let bytes = ArraySlice([UInt8](data))
         view?.feed(byteArray: bytes)
     }
 
