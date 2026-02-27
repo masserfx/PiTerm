@@ -58,15 +58,45 @@ final class GitHubService {
         let labels: [Label]
         let htmlUrl: String
         let createdAt: String
+        let closedAt: String?
+        let pullRequest: PullRequestRef?
 
         struct Label: Codable {
             let name: String
             let color: String?
         }
+
+        struct PullRequestRef: Codable {
+            let htmlUrl: String?
+            let mergedAt: String?
+        }
+
+        var hasClaude: Bool {
+            labels.contains { $0.name == "claude" }
+        }
+
+        /// Computed workflow status
+        var workflowStatus: WorkflowStatus {
+            if state == "closed" {
+                if pullRequest?.mergedAt != nil { return .merged }
+                return .closed
+            }
+            if pullRequest != nil { return .prReady }
+            if hasClaude { return .claudeWorking }
+            return .open
+        }
     }
 
-    func fetchIssues(owner: String, repo: String) async throws -> [Issue] {
-        let url = URL(string: "https://api.github.com/repos/\(owner)/\(repo)/issues?state=open&per_page=30&sort=updated")!
+    enum WorkflowStatus {
+        case open          // regular open issue
+        case claudeWorking // has 'claude' label, no PR yet
+        case prReady       // PR exists, not merged
+        case merged        // PR merged, issue closed
+        case closed        // closed without merge
+    }
+
+    func fetchIssues(owner: String, repo: String, state: String = "all") async throws -> [Issue] {
+        let url = URL(string: "https://api.github.com/repos/\(owner)/\(repo)/issues?state=\(state)&per_page=30&sort=updated")!
         let (data, _) = try await request(url: url)
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase

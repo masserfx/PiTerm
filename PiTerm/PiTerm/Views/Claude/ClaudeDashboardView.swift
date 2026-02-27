@@ -13,6 +13,22 @@ struct ClaudeDashboardView: View {
     @State private var isLoadingIssues = false
     @State private var createdIssueURL: String?
     @State private var selectedRepoForIssues: String = "PiTerm"
+    @State private var issueFilter: IssueFilter = .open
+    @State private var pollTimer: Timer?
+
+    enum IssueFilter: String, CaseIterable {
+        case open = "Open"
+        case closed = "Closed"
+        case all = "All"
+
+        var apiState: String {
+            switch self {
+            case .open: return "open"
+            case .closed: return "closed"
+            case .all: return "all"
+            }
+        }
+    }
 
     private let github = GitHubService.shared
     private let gitHubUser = "masserfx"
@@ -66,12 +82,19 @@ struct ClaudeDashboardView: View {
                 sessionManager.attach(to: session)
                 await sessionManager.refreshSessions()
             }
+            startPolling()
+        }
+        .onDisappear {
+            stopPolling()
         }
         .onChange(of: appState.isConnected) { _, connected in
             if connected, let session = appState.activeSession {
                 sessionManager.attach(to: session)
                 Task { await sessionManager.refreshSessions() }
             }
+        }
+        .onChange(of: issueFilter) { _, _ in
+            Task { await loadIssues() }
         }
     }
 
@@ -124,6 +147,16 @@ struct ClaudeDashboardView: View {
 
     private var issuesSection: some View {
         Section {
+            // Filter picker
+            Picker("Filter", selection: $issueFilter) {
+                ForEach(IssueFilter.allCases, id: \.self) { filter in
+                    Text(filter.rawValue).tag(filter)
+                }
+            }
+            .pickerStyle(.segmented)
+            .listRowBackground(Color.clear)
+            .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+
             if isLoadingIssues {
                 HStack {
                     ProgressView()
@@ -165,9 +198,7 @@ struct ClaudeDashboardView: View {
     private func issueRow(_ issue: GitHubService.Issue) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 6) {
-                Image(systemName: "circle.fill")
-                    .font(.system(size: 6))
-                    .foregroundStyle(.green)
+                statusIcon(for: issue.workflowStatus)
                 Text("#\(issue.number)")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -178,6 +209,9 @@ struct ClaudeDashboardView: View {
             }
 
             HStack(spacing: 4) {
+                // Workflow status badge
+                statusBadge(for: issue.workflowStatus)
+
                 ForEach(issue.labels, id: \.name) { label in
                     Text(label.name)
                         .font(.caption2)
@@ -186,6 +220,23 @@ struct ClaudeDashboardView: View {
                         .background(label.name == "claude" ? Color.purple.opacity(0.2) : Color.gray.opacity(0.15))
                         .foregroundStyle(label.name == "claude" ? .purple : .secondary)
                         .clipShape(Capsule())
+                }
+
+                // PR link
+                if let prUrl = issue.pullRequest?.htmlUrl {
+                    Link(destination: URL(string: prUrl)!) {
+                        HStack(spacing: 2) {
+                            Image(systemName: "arrow.triangle.pull")
+                                .font(.caption2)
+                            Text("PR")
+                                .font(.caption2)
+                        }
+                        .padding(.horizontal, 5)
+                        .padding(.vertical, 1)
+                        .background(Color.blue.opacity(0.15))
+                        .foregroundStyle(.blue)
+                        .clipShape(Capsule())
+                    }
                 }
             }
 
@@ -197,6 +248,52 @@ struct ClaudeDashboardView: View {
             }
         }
         .padding(.vertical, 2)
+    }
+
+    @ViewBuilder
+    private func statusIcon(for status: GitHubService.WorkflowStatus) -> some View {
+        switch status {
+        case .open:
+            Image(systemName: "circle")
+                .font(.system(size: 10))
+                .foregroundStyle(.green)
+        case .claudeWorking:
+            Image(systemName: "brain")
+                .font(.system(size: 10))
+                .foregroundStyle(.purple)
+                .symbolEffect(.pulse)
+        case .prReady:
+            Image(systemName: "arrow.triangle.pull")
+                .font(.system(size: 10))
+                .foregroundStyle(.blue)
+        case .merged:
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 10))
+                .foregroundStyle(.purple)
+        case .closed:
+            Image(systemName: "circle.slash")
+                .font(.system(size: 10))
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    @ViewBuilder
+    private func statusBadge(for status: GitHubService.WorkflowStatus) -> some View {
+        let (text, bg, fg): (String, Color, Color) = switch status {
+        case .open: ("Open", .green.opacity(0.15), .green)
+        case .claudeWorking: ("Claude working", .purple.opacity(0.15), .purple)
+        case .prReady: ("PR Ready", .blue.opacity(0.15), .blue)
+        case .merged: ("Merged", .purple.opacity(0.15), .purple)
+        case .closed: ("Closed", .gray.opacity(0.15), .secondary)
+        }
+        Text(text)
+            .font(.caption2)
+            .fontWeight(.medium)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(bg)
+            .foregroundStyle(fg)
+            .clipShape(Capsule())
     }
 
     // MARK: - Sessions Section
@@ -343,7 +440,25 @@ struct ClaudeDashboardView: View {
     private func loadIssues() async {
         isLoadingIssues = true
         defer { isLoadingIssues = false }
-        issues = (try? await github.fetchIssues(owner: gitHubUser, repo: selectedRepoForIssues)) ?? []
+        issues = (try? await github.fetchIssues(owner: gitHubUser, repo: selectedRepoForIssues, state: issueFilter.apiState)) ?? []
+    }
+
+    private func startPolling() {
+        stopPolling()
+        pollTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { _ in
+            Task { @MainActor in
+                // Only auto-refresh if there are active Claude issues
+                let hasActiveWork = issues.contains { $0.workflowStatus == .claudeWorking }
+                if hasActiveWork {
+                    await loadIssues()
+                }
+            }
+        }
+    }
+
+    private func stopPolling() {
+        pollTimer?.invalidate()
+        pollTimer = nil
     }
 
     private func sendSSH(_ command: String) {
