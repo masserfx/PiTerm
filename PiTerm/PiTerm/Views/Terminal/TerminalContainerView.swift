@@ -19,7 +19,11 @@ struct TerminalContainerView: View {
                     },
                     onDisconnect: {
                         disconnect()
-                    }
+                    },
+                    onToggleFullscreen: {
+                        appState.isTerminalFullscreen.toggle()
+                    },
+                    isFullscreen: appState.isTerminalFullscreen
                 )
 
                 // Terminal view
@@ -61,6 +65,8 @@ struct TerminalContainerView: View {
         }
         .navigationTitle(appState.activeHost?.name ?? "Terminal")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(appState.isTerminalFullscreen ? .hidden : .visible, for: .navigationBar)
+        .toolbar(appState.isTerminalFullscreen ? .hidden : .visible, for: .tabBar)
         .onReceive(NotificationCenter.default.publisher(for: .terminalDataReceived)) { notification in
             if let data = notification.userInfo?["data"] as? Data {
                 terminalRef?.feed(data: data)
@@ -119,6 +125,7 @@ struct TerminalContainerView: View {
                 appState.isConnected = false
                 appState.activeSession = nil
                 appState.activeHost = nil
+                appState.isTerminalFullscreen = false
                 appState.selectedTab = .hosts
             }
         }

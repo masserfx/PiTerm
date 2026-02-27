@@ -7,6 +7,7 @@ final class AppState {
     var activeHost: SSHHost?
     var activeSession: SSHSession?
     var tailscaleActive = false
+    var isTerminalFullscreen = false
 
     enum Tab: Hashable {
         case hosts

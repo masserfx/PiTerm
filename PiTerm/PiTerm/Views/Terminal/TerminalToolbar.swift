@@ -6,6 +6,8 @@ import UIKit
 struct TerminalToolbar: View {
     let onCommand: (String) -> Void
     let onDisconnect: () -> Void
+    let onToggleFullscreen: () -> Void
+    var isFullscreen: Bool = false
 
     @State private var showCommands = false
 
@@ -46,6 +48,16 @@ struct TerminalToolbar: View {
             }
 
             Spacer()
+
+            // Fullscreen toggle button
+            Button {
+                onToggleFullscreen()
+            } label: {
+                Image(systemName: isFullscreen
+                      ? "arrow.down.right.and.arrow.up.left"
+                      : "arrow.up.left.and.arrow.down.right")
+                    .foregroundStyle(.primary)
+            }
 
             // Disconnect button
             Button(role: .destructive) {
