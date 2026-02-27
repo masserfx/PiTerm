@@ -1,0 +1,615 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10000010000000000000001 /* PiTermApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000001; };
+		A10000020000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000020000000000000002; };
+		A10000030000000000000003 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000030000000000000003; };
+		A10000040000000000000004 /* Host.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000040000000000000004; };
+		A10000050000000000000005 /* SSHKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000050000000000000005; };
+		A10000060000000000000006 /* HostGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000060000000000000006; };
+		A10000070000000000000007 /* CommandSnippet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000070000000000000007; };
+		A10000080000000000000008 /* SSHClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000080000000000000008; };
+		A10000090000000000000009 /* SSHSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000090000000000000009; };
+		A1000010000000000000000A /* SSHKeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000010000000000000000A; };
+		A1000011000000000000000B /* SSHAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000011000000000000000B; };
+		A1000012000000000000000C /* TailscaleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000012000000000000000C; };
+		A1000013000000000000000D /* ClaudeSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000013000000000000000D; };
+		A1000014000000000000000E /* ClaudeCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000014000000000000000E; };
+		A1000015000000000000000F /* HostListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000015000000000000000F; };
+		A10000160000000000000010 /* HostEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000160000000000000010; };
+		A10000170000000000000011 /* HostCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000170000000000000011; };
+		A10000180000000000000012 /* TerminalContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000180000000000000012; };
+		A10000190000000000000013 /* TerminalRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000190000000000000013; };
+		A1000020000000000000001A /* TerminalToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000020000000000000001A; };
+		A10000210000000000000014 /* ExtraKeysBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000210000000000000014; };
+		A10000220000000000000015 /* ClaudeDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000220000000000000015; };
+		A10000230000000000000016 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000230000000000000016; };
+		A10000240000000000000017 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000240000000000000017; };
+		A10000250000000000000018 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000250000000000000018; };
+		A10000260000000000000019 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000260000000000000019; };
+		A10000270000000000000020 /* SwiftTerm in Frameworks */ = {isa = PBXBuildFile; productRef = B10000010000000000000001; };
+		A10000280000000000000021 /* NIOSSH in Frameworks */ = {isa = PBXBuildFile; productRef = B10000020000000000000002; };
+		A10000290000000000000022 /* NIOCore in Frameworks */ = {isa = PBXBuildFile; productRef = B10000030000000000000003; };
+		A10000300000000000000023 /* NIOPosix in Frameworks */ = {isa = PBXBuildFile; productRef = B10000040000000000000004; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A20000010000000000000001 /* PiTermApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiTermApp.swift; sourceTree = "<group>"; };
+		A20000020000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A20000030000000000000003 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		A20000040000000000000004 /* Host.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Host.swift; sourceTree = "<group>"; };
+		A20000050000000000000005 /* SSHKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHKey.swift; sourceTree = "<group>"; };
+		A20000060000000000000006 /* HostGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostGroup.swift; sourceTree = "<group>"; };
+		A20000070000000000000007 /* CommandSnippet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandSnippet.swift; sourceTree = "<group>"; };
+		A20000080000000000000008 /* SSHClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHClient.swift; sourceTree = "<group>"; };
+		A20000090000000000000009 /* SSHSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHSession.swift; sourceTree = "<group>"; };
+		A2000010000000000000000A /* SSHKeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHKeyManager.swift; sourceTree = "<group>"; };
+		A2000011000000000000000B /* SSHAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHAuthenticator.swift; sourceTree = "<group>"; };
+		A2000012000000000000000C /* TailscaleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TailscaleService.swift; sourceTree = "<group>"; };
+		A2000013000000000000000D /* ClaudeSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeSessionManager.swift; sourceTree = "<group>"; };
+		A2000014000000000000000E /* ClaudeCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeCommands.swift; sourceTree = "<group>"; };
+		A2000015000000000000000F /* HostListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostListView.swift; sourceTree = "<group>"; };
+		A20000160000000000000010 /* HostEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostEditView.swift; sourceTree = "<group>"; };
+		A20000170000000000000011 /* HostCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostCardView.swift; sourceTree = "<group>"; };
+		A20000180000000000000012 /* TerminalContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalContainerView.swift; sourceTree = "<group>"; };
+		A20000190000000000000013 /* TerminalRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalRepresentable.swift; sourceTree = "<group>"; };
+		A2000020000000000000001A /* TerminalToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalToolbar.swift; sourceTree = "<group>"; };
+		A20000210000000000000014 /* ExtraKeysBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraKeysBar.swift; sourceTree = "<group>"; };
+		A20000220000000000000015 /* ClaudeDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeDashboardView.swift; sourceTree = "<group>"; };
+		A20000230000000000000016 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		A20000240000000000000017 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
+		A20000250000000000000018 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		A20000260000000000000019 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A20000270000000000000020 /* PiTerm.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PiTerm.entitlements; sourceTree = "<group>"; };
+		C10000010000000000000001 /* PiTerm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PiTerm.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D10000010000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000270000000000000020 /* SwiftTerm in Frameworks */,
+				A10000280000000000000021 /* NIOSSH in Frameworks */,
+				A10000290000000000000022 /* NIOCore in Frameworks */,
+				A10000300000000000000023 /* NIOPosix in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E10000010000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				E10000020000000000000002 /* PiTerm */,
+				E10000030000000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E10000020000000000000002 /* PiTerm */ = {
+			isa = PBXGroup;
+			children = (
+				E10000040000000000000004 /* App */,
+				E10000050000000000000005 /* Models */,
+				E10000060000000000000006 /* Services */,
+				E10000070000000000000007 /* Views */,
+				E10000080000000000000008 /* Utilities */,
+				E10000090000000000000009 /* Resources */,
+			);
+			path = PiTerm;
+			sourceTree = "<group>";
+		};
+		E10000030000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C10000010000000000000001 /* PiTerm.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E10000040000000000000004 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				A20000010000000000000001 /* PiTermApp.swift */,
+				A20000020000000000000002 /* ContentView.swift */,
+				A20000030000000000000003 /* AppState.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		E10000050000000000000005 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A20000040000000000000004 /* Host.swift */,
+				A20000050000000000000005 /* SSHKey.swift */,
+				A20000060000000000000006 /* HostGroup.swift */,
+				A20000070000000000000007 /* CommandSnippet.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		E10000060000000000000006 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				E1000010000000000000000A /* SSH */,
+				E1000011000000000000000B /* Tailscale */,
+				E1000012000000000000000C /* Claude */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		E10000070000000000000007 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				E1000013000000000000000D /* Hosts */,
+				E1000014000000000000000E /* Terminal */,
+				E1000015000000000000000F /* Claude */,
+				E10000160000000000000010 /* Settings */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		E10000080000000000000008 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				A20000240000000000000017 /* KeychainHelper.swift */,
+				A20000250000000000000018 /* NetworkMonitor.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		E10000090000000000000009 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A20000260000000000000019 /* Assets.xcassets */,
+				A20000270000000000000020 /* PiTerm.entitlements */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		E1000010000000000000000A /* SSH */ = {
+			isa = PBXGroup;
+			children = (
+				A20000080000000000000008 /* SSHClient.swift */,
+				A20000090000000000000009 /* SSHSession.swift */,
+				A2000010000000000000000A /* SSHKeyManager.swift */,
+				A2000011000000000000000B /* SSHAuthenticator.swift */,
+			);
+			path = SSH;
+			sourceTree = "<group>";
+		};
+		E1000011000000000000000B /* Tailscale */ = {
+			isa = PBXGroup;
+			children = (
+				A2000012000000000000000C /* TailscaleService.swift */,
+			);
+			path = Tailscale;
+			sourceTree = "<group>";
+		};
+		E1000012000000000000000C /* Claude */ = {
+			isa = PBXGroup;
+			children = (
+				A2000013000000000000000D /* ClaudeSessionManager.swift */,
+				A2000014000000000000000E /* ClaudeCommands.swift */,
+			);
+			path = Claude;
+			sourceTree = "<group>";
+		};
+		E1000013000000000000000D /* Hosts */ = {
+			isa = PBXGroup;
+			children = (
+				A2000015000000000000000F /* HostListView.swift */,
+				A20000160000000000000010 /* HostEditView.swift */,
+				A20000170000000000000011 /* HostCardView.swift */,
+			);
+			path = Hosts;
+			sourceTree = "<group>";
+		};
+		E1000014000000000000000E /* Terminal */ = {
+			isa = PBXGroup;
+			children = (
+				A20000180000000000000012 /* TerminalContainerView.swift */,
+				A20000190000000000000013 /* TerminalRepresentable.swift */,
+				A2000020000000000000001A /* TerminalToolbar.swift */,
+				A20000210000000000000014 /* ExtraKeysBar.swift */,
+			);
+			path = Terminal;
+			sourceTree = "<group>";
+		};
+		E1000015000000000000000F /* Claude */ = {
+			isa = PBXGroup;
+			children = (
+				A20000220000000000000015 /* ClaudeDashboardView.swift */,
+			);
+			path = Claude;
+			sourceTree = "<group>";
+		};
+		E10000160000000000000010 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				A20000230000000000000016 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F10000010000000000000001 /* PiTerm */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F10000020000000000000002 /* Build configuration list for PBXNativeTarget "PiTerm" */;
+			buildPhases = (
+				F10000030000000000000003 /* Sources */,
+				D10000010000000000000001 /* Frameworks */,
+				F10000040000000000000004 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PiTerm;
+			packageProductDependencies = (
+				B10000010000000000000001 /* SwiftTerm */,
+				B10000020000000000000002 /* NIOSSH */,
+				B10000030000000000000003 /* NIOCore */,
+				B10000040000000000000004 /* NIOPosix */,
+			);
+			productName = PiTerm;
+			productReference = C10000010000000000000001 /* PiTerm.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F10000050000000000000005 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1540;
+				TargetAttributes = {
+					F10000010000000000000001 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+				};
+			};
+			buildConfigurationList = F10000060000000000000006 /* Build configuration list for PBXProject "PiTerm" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = E10000010000000000000001;
+			packageReferences = (
+				P10000010000000000000001 /* XCRemoteSwiftPackageReference "SwiftTerm" */,
+				P10000020000000000000002 /* XCRemoteSwiftPackageReference "swift-nio-ssh" */,
+				P10000030000000000000003 /* XCRemoteSwiftPackageReference "swift-nio" */,
+			);
+			productRefGroup = E10000030000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F10000010000000000000001 /* PiTerm */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F10000040000000000000004 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000260000000000000019 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F10000030000000000000003 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000010000000000000001 /* PiTermApp.swift in Sources */,
+				A10000020000000000000002 /* ContentView.swift in Sources */,
+				A10000030000000000000003 /* AppState.swift in Sources */,
+				A10000040000000000000004 /* Host.swift in Sources */,
+				A10000050000000000000005 /* SSHKey.swift in Sources */,
+				A10000060000000000000006 /* HostGroup.swift in Sources */,
+				A10000070000000000000007 /* CommandSnippet.swift in Sources */,
+				A10000080000000000000008 /* SSHClient.swift in Sources */,
+				A10000090000000000000009 /* SSHSession.swift in Sources */,
+				A1000010000000000000000A /* SSHKeyManager.swift in Sources */,
+				A1000011000000000000000B /* SSHAuthenticator.swift in Sources */,
+				A1000012000000000000000C /* TailscaleService.swift in Sources */,
+				A1000013000000000000000D /* ClaudeSessionManager.swift in Sources */,
+				A1000014000000000000000E /* ClaudeCommands.swift in Sources */,
+				A1000015000000000000000F /* HostListView.swift in Sources */,
+				A10000160000000000000010 /* HostEditView.swift in Sources */,
+				A10000170000000000000011 /* HostCardView.swift in Sources */,
+				A10000180000000000000012 /* TerminalContainerView.swift in Sources */,
+				A10000190000000000000013 /* TerminalRepresentable.swift in Sources */,
+				A1000020000000000000001A /* TerminalToolbar.swift in Sources */,
+				A10000210000000000000014 /* ExtraKeysBar.swift in Sources */,
+				A10000220000000000000015 /* ClaudeDashboardView.swift in Sources */,
+				A10000230000000000000016 /* SettingsView.swift in Sources */,
+				A10000240000000000000017 /* KeychainHelper.swift in Sources */,
+				A10000250000000000000018 /* NetworkMonitor.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		G10000010000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		G10000020000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		G10000030000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PiTerm/Resources/PiTerm.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = PiTerm;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "PiTerm needs local network access to discover SSH hosts on your network.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.piterm.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		G10000040000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PiTerm/Resources/PiTerm.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = PiTerm;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "PiTerm needs local network access to discover SSH hosts on your network.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.piterm.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F10000060000000000000006 /* Build configuration list for PBXProject "PiTerm" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				G10000010000000000000001 /* Debug */,
+				G10000020000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F10000020000000000000002 /* Build configuration list for PBXNativeTarget "PiTerm" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				G10000030000000000000003 /* Debug */,
+				G10000040000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		P10000010000000000000001 /* XCRemoteSwiftPackageReference "SwiftTerm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/migueldeicaza/SwiftTerm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.0;
+			};
+		};
+		P10000020000000000000002 /* XCRemoteSwiftPackageReference "swift-nio-ssh" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-nio-ssh.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.8.0;
+			};
+		};
+		P10000030000000000000003 /* XCRemoteSwiftPackageReference "swift-nio" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-nio.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.65.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B10000010000000000000001 /* SwiftTerm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = P10000010000000000000001;
+			productName = SwiftTerm;
+		};
+		B10000020000000000000002 /* NIOSSH */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = P10000020000000000000002;
+			productName = NIOSSH;
+		};
+		B10000030000000000000003 /* NIOCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = P10000030000000000000003;
+			productName = NIOCore;
+		};
+		B10000040000000000000004 /* NIOPosix */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = P10000030000000000000003;
+			productName = NIOPosix;
+		};
+/* End XCSwiftPackageProductDependency section */
+
+	};
+	rootObject = F10000050000000000000005 /* Project object */;
+}
